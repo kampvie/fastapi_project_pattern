@@ -5,17 +5,26 @@ import shutil
 import shlex
 from pathlib import Path
 from fileinput import FileInput
+from distutils.dir_util import copy_tree
+
+CWD = Path(__file__).parent
 
 LOCAL_DIR = Path(__file__).parent / "temp"
 
 GIT_REPO = LOCAL_DIR / ".git"
 
-if os.path.isdir(LOCAL_DIR.as_posix()):
-    shutil.rmtree(LOCAL_DIR.as_posix())
 
-REMOTE_REPO = "https://github.com/kampvie/fastapi-project-pattern.git"
+def remove_local_dir():
+    if os.path.isdir(LOCAL_DIR.as_posix()):
+        shutil.rmtree(LOCAL_DIR.as_posix())
+
+
+remove_local_dir()
+
+REMOTE_REPO = "https://github.com/kampvie/fastapi_project_pattern.git"
 
 BRANCH = "main"
+
 
 def start_creation():
     # Clone git repo into local
@@ -23,7 +32,8 @@ def start_creation():
 
     cmd = shlex.split("openssl rand -hex 32")
 
-    SECRET_KEY = subprocess.run(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode("utf-8")
+    SECRET_KEY = subprocess.run(
+        cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode("utf-8")
 
     VARS = {
         # KEY: [DefaultValue, Promtline, Required, ValidateRegrexPattern, Type]
@@ -32,7 +42,7 @@ def start_creation():
         'PROJECT_TITLE': [None, "Title >>> ", True, None, str],
         'PROJECT_SECRET_KEY': [SECRET_KEY, f"Secret[Default: {SECRET_KEY}] >>> ", False, None, str],
         'PROJECT_DESCRIPTION': [None, "Description >>> ", True, None, str],
-        'PORT': [2306, "Port to run [0-65536](Default: 2306) >>> ", True, None, int],
+        'PORT': ["2306", "Port to run [0-65536](Default: 2306) >>> ", False, None, str],
         'CLOUDINARY_URL': [None, "CLOUDINARY_URL(Optional) >>> ", False, None, str],
         'SENDGRID_API_KEY': [None, "SENDGRID_API_KEY(Optional) >>> ", False, None, str],
         'REMOTE_MONGO_URL': [None, "REMOTE_MONGO_URL(Optional) >>> ", False, None, str],
@@ -43,16 +53,17 @@ def start_creation():
         'RABBITMQ_DEFAULT_PASS': ["rabbit", "RABBITMQ_DEFAULT_PASS(Default: rabbit) >>> ", False, None, str],
     }
 
-    for k, v in VARS.items():
-        # Read from input and check validation
-        v[0] = input(v[1]).strip()
-        is_invalid = False
+    def is_valid(v):
         if len(v[0]) == 0 and v[2]:
-            is_invalid = True
-        # TODO Check regrex for validate user input
-        while is_invalid:
-            v[0] = input(v[1]).strip()
+            return False
+            # TODO Check regrex for validate user input
+        return True
 
+    for k, v in VARS.items():
+        while True:
+            v[0] = input(v[1]).strip()
+            if is_valid(v):
+                break
 
     def replace(file_path: Path, text: str, subs: str, flags=0):
         """Replace content in a file
@@ -85,3 +96,15 @@ def start_creation():
     ]
     for _path in redundancies:
         os.remove(_path.as_posix())
+
+    FASTAPI_PROJECT_PATTERN = LOCAL_DIR / "fastapi_project_pattern"
+    shutil.rmtree(FASTAPI_PROJECT_PATTERN.as_posix())
+
+    # Create project directory and put code in it
+    PROJECT_PATH: Path = CWD / f'{VARS["PROJECT_NAME"][0]}'
+    os.mkdir(PROJECT_PATH.as_posix())
+    copy_tree(LOCAL_DIR.as_posix(), PROJECT_PATH.as_posix())
+    remove_local_dir()
+
+
+start_creation()
