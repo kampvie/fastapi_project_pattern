@@ -13,4 +13,4 @@ dependencies = [
 ]
 
 [project.urls]
-Source = "https://github.com/kampvie/fastapi-project-pattern"
+Source = "https://github.com/kampvie/fastapi_project_pattern"

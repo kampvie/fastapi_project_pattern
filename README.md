@@ -12,28 +12,28 @@
 * CircleCI
 * GitlabCI/CD
 
-Folder, files need for deploy with AWS CodeDeploy
+**AWS CodeDeploy scripts**
 
 | Location         |
 | ---------------- |
 | scripts/aws/*.sh |
 | ./appspec.yml    |
 
-Using remote mongodb or(and) postgres by providing these value in ```docker-compose.yml```
+**Deploy VPS scripts**
 
-- REMOTE_MONGO_URL
-- REMOTE_POSTGRES_URL
-  
-Using sendgrid and cloudinary by providing these value also:
+| Location              | CI/CD        |
+| --------------------- | ------------ |
+| scripts/vps/deploy.sh | Gitlab CI/CD |
+| .circleci/config.yml  | CircleCI     |
 
-- SENDGRID_API_KEY
-- CLOUDINARY_URL
+**Installation**
 
-Set up values in `project.settings`
+`pip install fastapi_project_pattern`
 
-| Variable name | Description                  | Default                                             |
-| ------------- | ---------------------------- | --------------------------------------------------- |
-| PROJECT_NAME  | Name of the project          | FastAPI-project-pattern                             |
-| GIT_SSH_REPO  | SSH repo url                 | git@github.com:Sang2306/FastAPI-project-pattern.git |
-| SERVICE_NAME  | Name of systemd unit service | deploy_$PROJECT_NAME                                |
-| PORT          | Port to run service          | 2306                                                |
+```python
+
+from fastapi_project_pattern import start_creation
+
+start_creation()
+
+```
