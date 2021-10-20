@@ -1,0 +1,93 @@
+# Before adding this file to your project be sure that you've done step creating ssh key on your
+# Linux machine and copy content of public key which located ~/.ssh/id_rsa.pub to this file ~/.ssh/authorized_keys on your VPS
+# fingerprints: By adding private ssh key which located ~/.ssh/id_rsa to ssh key in project settings
+# SSH_USER: Username identity of user on VPS
+# SSH_HOST: Ip or DNS host of VPS
+# SSH_USER_PASSWORD: Password identity of user on VPS
+# DOCKER_PASSWORD: Dockerhub password
+# DOCKER_USER: Dockerhub user
+# IMAGE_TAG: Image tag name to push
+# REPO: Dockerhub repo
+# All variables above need to be defined on circleci Environment Variables
+
+version: 2.1
+
+jobs:
+  build-and-test:
+    docker:
+      - image: cimg/python:3.8
+    working_directory: ~/{PROJECT_NAME}
+    steps:
+      - checkout
+      - run:
+          name: Create venv
+          command: |
+            python -m venv ./venv
+            source ./venv/bin/activate
+            pip install -r requirements.txt
+      - run:
+          name: Check test version
+          command: |
+            source ./venv/bin/activate
+            pytest --version
+      - run:
+          name: Run test
+          command: |
+            source ./venv/bin/activate
+            pytest ./tests/
+
+  deploy-vps:
+    machine:
+      image: ubuntu-2004:202104-01
+    working_directory: ~/{PROJECT_NAME}
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "7c:09:24:b3:15:3c:eb:ee:bf:7d:ae:46:7e:ba:35:30"
+      - run:
+          name: Deploying to VPS server
+          command: |
+            scp -o StrictHostKeyChecking=no ./scripts/vps/deploy.sh $SSH_USER@$SSH_HOST:
+            scp -o StrictHostKeyChecking=no ./project.settings $SSH_USER@$SSH_HOST:
+            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "echo $SSH_USER_PASSWORD | sudo -S chmod +x ./deploy.sh && ./deploy.sh"
+
+  build-and-publish-image:
+    machine:
+      image: ubuntu-2004:202104-01
+    working_directory: ~/{PROJECT_NAME}
+    steps:
+      - checkout
+      - run:
+          name: Loggin into docker
+          command: |
+            echo "$DOCKER_PASSWORD" | docker login -u $DOCKER_USER --password-stdin
+      - run:
+          name: Build and tag image
+          command: |
+            docker image build -t $IMAGE_TAG .
+      - run:
+          name: Push image to docker hub
+          command: |
+            docker image tag $IMAGE_TAG:latest $REPO:$IMAGE_TAG
+            docker image push $REPO:$IMAGE_TAG
+
+workflows:
+  version: 2
+  build-test-deploy:
+    jobs:
+      - build-and-test
+      - deploy-vps:
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only: main
+
+  publish-image:
+    jobs:
+      - build-and-publish-image:
+          type: approval
+          filters:
+            branches:
+              only: main

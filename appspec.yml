@@ -1,0 +1,15 @@
+version: 0.0
+os: linux
+files:
+  - source: ./
+    destination: /usr/app/{PROJECT_NAME}
+hooks:
+  BeforeInstall:
+    - location: scripts/aws/install_dependencies.sh
+      timeout: 360
+      runas: root
+  ApplicationStart:
+    - location: scripts/aws/build.sh
+    - location: scripts/aws/create-service-and-start.sh
+  ApplicationStop:
+    - location: scripts/aws/remove-service-and-stop.sh

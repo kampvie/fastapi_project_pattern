@@ -1,0 +1,1 @@
+## Define response model for api views

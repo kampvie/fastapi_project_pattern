@@ -1,0 +1,1 @@
+## Define request model for api views
