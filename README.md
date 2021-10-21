@@ -31,9 +31,9 @@
 `pip install fastapi_project_pattern`
 
 ```python
+from pathlib import Path
 
 from fastapi_project_pattern import start_creation
 
-start_creation()
-
+start_creation(Path.cwd())
 ```

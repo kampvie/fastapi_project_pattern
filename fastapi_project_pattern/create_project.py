@@ -110,4 +110,9 @@ def start_creation(path: Path = None):
     PROJECT_PATH: Path = CWD / f'{VARS["PROJECT_NAME"][0]}'
     os.mkdir(PROJECT_PATH.as_posix())
     copy_tree(LOCAL_DIR.as_posix(), PROJECT_PATH.as_posix())
+
+    os.mkdir(path.as_posix())
+    copy_tree(PROJECT_PATH.as_posix(), path.as_posix())
+    shutil.rmtree(PROJECT_PATH.as_posix())
+    
     remove_local_dir()
