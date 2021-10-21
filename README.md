@@ -21,10 +21,10 @@
 
 **Deploy VPS scripts**
 
-| Location              | CI/CD        |
-| --------------------- | ------------ |
-| scripts/vps/deploy.sh | Gitlab CI/CD |
-| .circleci/config.yml  | CircleCI     |
+| Location             | CI/CD        |
+| -------------------- | ------------ |
+| .gitlab-ci.yml       | Gitlab CI/CD |
+| .circleci/config.yml | CircleCI     |
 
 **Installation**
 
