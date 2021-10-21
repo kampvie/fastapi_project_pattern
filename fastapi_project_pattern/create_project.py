@@ -26,7 +26,13 @@ REMOTE_REPO = "https://github.com/kampvie/fastapi_project_pattern.git"
 BRANCH = "main"
 
 
-def start_creation():
+def start_creation(path: Path = None):
+    """Create a project template
+    Args:
+        path (Path): Location a project should be placed once created
+    """
+    if not path:
+        raise ValueError("path parameter is required")
     # Clone git repo into local
     git.Repo.clone_from(REMOTE_REPO, LOCAL_DIR.as_posix(), branch=BRANCH)
 
@@ -105,6 +111,3 @@ def start_creation():
     os.mkdir(PROJECT_PATH.as_posix())
     copy_tree(LOCAL_DIR.as_posix(), PROJECT_PATH.as_posix())
     remove_local_dir()
-
-
-start_creation()
