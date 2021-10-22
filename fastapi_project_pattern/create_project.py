@@ -39,7 +39,7 @@ def start_creation(path: Path = None):
     cmd = shlex.split("openssl rand -hex 32")
 
     SECRET_KEY = subprocess.run(
-        cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode("utf-8")
+        cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode("utf-8").strip()
 
     VARS = {
         # KEY: [DefaultValue, Promtline, Required, ValidateRegrexPattern, Type]
