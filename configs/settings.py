@@ -1,4 +1,6 @@
 import os
+import subprocess
+import shlex
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -130,3 +132,13 @@ if all([DB_HOST, DB_PORT]):
             roles=["readWrite", "dbAdmin"],
             mechanisms=["SCRAM-SHA-256"],
         )
+
+# Starting celery schedule
+celery_logs = open("logs/celery_tasks.log", "w", encoding="utf8")
+started_celery_schedule = None
+cmd_start_celery_schedule = 'celery -A app.tasks.celery worker -E -l info -B'
+started_celery_schedule = subprocess.Popen(
+    shlex.split(cmd_start_celery_schedule),
+    universal_newlines=True, stdout=celery_logs
+)
+started_celery_schedule.communicate()

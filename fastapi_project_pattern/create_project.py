@@ -43,32 +43,35 @@ def start_creation(path: Path = None):
 
     VARS = {
         # KEY: [DefaultValue, Promtline, Required, ValidateRegrexPattern, Type]
-        'PROJECT_NAME': [None, "Project name >>> ", True, None, str],
-        'PROJECT_GIT_SSH_REPO': [None, "SSH git repository >>> ", True, None, str],
-        'PROJECT_TITLE': [None, "Title >>> ", True, None, str],
+        'PROJECT_NAME': ["", "Project name >>> ", True, None, str],
+        'PROJECT_GIT_SSH_REPO': ["", "SSH git repository >>> ", True, None, str],
+        'PROJECT_TITLE': ["", "Title >>> ", True, None, str],
         'PROJECT_SECRET_KEY': [SECRET_KEY, f"Secret[Default: {SECRET_KEY}] >>> ", False, None, str],
         'PROJECT_DESCRIPTION': [None, "Description >>> ", True, None, str],
         'PORT': ["2306", "Port to run [0-65536](Default: 2306) >>> ", False, None, str],
         'CLOUDINARY_URL': ["None", "CLOUDINARY_URL(Optional) >>> ", False, None, str],
         'SENDGRID_API_KEY': ["None", "SENDGRID_API_KEY(Optional) >>> ", False, None, str],
         'REMOTE_MONGO_URL': ["None", "REMOTE_MONGO_URL(Optional) >>> ", False, None, str],
-        'REMOTE_POSTGRES_URL': ["None", "REMOTE_POSTGRES_URL[Optional]: ", False, None, str],
+        'REMOTE_POSTGRES_URL': ["None", "REMOTE_POSTGRES_URL[Optional] >>> ", False, None, str],
         'MONGO_INITDB_ROOT_USERNAME': ["mongo", "MONGO_INITDB_ROOT_USERNAME(Default: mongo) >>> ", False, None, str],
         'MONGO_INITDB_ROOT_PASSWORD': ["mongo", "MONGO_INITDB_ROOT_PASSWORD(Default: mongo) >>> ", False, None, str],
         'RABBITMQ_DEFAULT_USER': ["rabbit", "RABBITMQ_DEFAULT_USER(Default: rabbit) >>> ", False, None, str],
         'RABBITMQ_DEFAULT_PASS': ["rabbit", "RABBITMQ_DEFAULT_PASS(Default: rabbit) >>> ", False, None, str],
     }
 
-    def is_valid(v):
-        if len(v[0]) == 0 and v[2]:
+    def is_valid(v, text):
+        # Check if text is empty but this field is required
+        # So with that said it's not valid
+        if len(text) == 0 and v[2]:
             return False
-            # TODO Check regrex for validate user input
+        #TODO Check regrex to validate pattern
         return True
 
     for k, v in VARS.items():
         while True:
-            v[0] = input(v[1]).strip()
-            if is_valid(v):
+            text = input(v[1]).strip()
+            if is_valid(v, text):
+                v[0] = text or v[0]
                 break
 
     def replace(file_path: Path, text: str, subs: str, flags=0):
