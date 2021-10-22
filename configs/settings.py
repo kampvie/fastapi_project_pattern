@@ -134,6 +134,7 @@ if all([DB_HOST, DB_PORT]):
         )
 
 # Starting celery schedule
+os.mkdir("./logs")
 celery_logs = open("logs/celery_tasks.log", "w", encoding="utf8")
 started_celery_schedule = None
 cmd_start_celery_schedule = 'celery -A app.tasks.celery worker -E -l info -B'
