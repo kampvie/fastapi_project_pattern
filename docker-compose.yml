@@ -5,15 +5,7 @@ services:
     build:
       context: .
     working_dir: /usr/app/{PROJECT_NAME}
-    environment:
-      DB_HOST: mongo
-      DB_PORT: 27017
-      RABBITMQ: rabbitmq
-      DEBUG: 1
-      CLOUDINARY_URL: {CLOUDINARY_URL}
-      SENDGRID_API_KEY: {SENDGRID_API_KEY}
-      REMOTE_MONGO_URL: {REMOTE_MONGO_URL}
-      REMOTE_POSTGRES_URL: {REMOTE_POSTGRES_URL}
+    env_file: .env
     ports:
       - 2306:2306
     volumes:
@@ -21,20 +13,6 @@ services:
     depends_on:
       - mongo
       - rabbitmq
-
-  mongo:
-    image: mongo:latest
-    container_name: mongo_{PROJECT_NAME}
-    restart: on-failure
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: {MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: {MONGO_INITDB_ROOT_PASSWORD}
-    ports:
-      - 47017:27017
-    expose:
-      - 27017
-    volumes:
-      - mongo_db:/data/db
 
   rabbitmq:
     image: rabbitmq:3.8.9-management-alpine
@@ -44,14 +22,26 @@ services:
       - rabbitmq_etc:/etc/rabbitmq/
       - rabbitmq_data:/var/lib/rabbitmq/
       - rabbitmq_logs:/var/log/rabbitmq/
-    environment:
-      RABBITMQ_DEFAULT_USER: {RABBITMQ_DEFAULT_USER}
-      RABBITMQ_DEFAULT_PASS: {RABBITMQ_DEFAULT_PASS}
+    env_file: .env
     ports:
       - 16672:15672
     expose:
       - 5672
       - 15672
+    depends_on:
+      - mongo
+
+    mongo:
+    image: mongo:latest
+    container_name: mongo_{PROJECT_NAME}
+    restart: on-failure
+    env_file: .env
+    ports:
+      - 47017:27017
+    expose:
+      - 27017
+    volumes:
+      - mongo_db:/data/db
 
 volumes:
   mongo_db:

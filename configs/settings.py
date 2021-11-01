@@ -96,6 +96,7 @@ schema.field_schema = field_schema
 
 # Get DB host from docker-compose environment
 DB_HOST = os.environ.get('DB_HOST')
+
 DB_PORT = os.environ.get('DB_PORT')
 
 RABBITMQ = os.environ.get('RABBITMQ')
@@ -107,6 +108,10 @@ SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
 REMOTE_MONGO_URL = os.environ.get('REMOTE_MONGO_URL')
 
 REMOTE_POSTGRES_URL = os.environ.get('REMOTE_POSTGRES_URL')
+
+RABBITMQ_DEFAULT_USER = os.environ.get('RABBITMQ_DEFAULT_USER')
+
+RABBITMQ_DEFAULT_PASS = os.environ.get('RABBITMQ_DEFAULT_PASS')
 
 CELERY_APP_NAME = 'app'
 
@@ -133,13 +138,28 @@ if all([DB_HOST, DB_PORT]):
             mechanisms=["SCRAM-SHA-256"],
         )
 
-# Starting celery schedule
-os.mkdir("./logs")
-celery_logs = open("logs/celery_tasks.log", "w", encoding="utf8")
+# Setting up events
 started_celery_schedule = None
-cmd_start_celery_schedule = 'celery -A app.tasks.celery worker -E -l info -B'
-started_celery_schedule = subprocess.Popen(
-    shlex.split(cmd_start_celery_schedule),
-    universal_newlines=True, stdout=celery_logs
-)
-started_celery_schedule.communicate()
+
+
+@app.on_event('startup')
+async def startup():
+    import os
+    import shlex
+    import subprocess
+    # Starting celery schedule
+    if not os.path.exists("./logs"):
+        os.mkdir("./logs")
+    celery_logs = open("logs/celery_tasks.log", "w", encoding="utf8")
+    cmd_start_celery_schedule = 'celery -A app.tasks.celery worker -E -l info -B'
+    started_celery_schedule = subprocess.Popen(
+        shlex.split(cmd_start_celery_schedule),
+        universal_newlines=True, stdout=celery_logs
+    )
+    started_celery_schedule.communicate()
+
+
+@app.on_event('shutdown')
+async def shutdown():
+    if started_celery_schedule:
+        started_celery_schedule.kill()
