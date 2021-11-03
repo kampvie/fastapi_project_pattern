@@ -31,7 +31,7 @@ services:
     depends_on:
       - mongo
 
-    mongo:
+  mongo:
     image: mongo:latest
     container_name: mongo_{PROJECT_NAME}
     restart: on-failure
