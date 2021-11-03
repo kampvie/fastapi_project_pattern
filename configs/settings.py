@@ -107,6 +107,10 @@ SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
 
 REMOTE_MONGO_URL = os.environ.get('REMOTE_MONGO_URL')
 
+MONGO_INITDB_ROOT_USERNAME = os.environ.get('MONGO_INITDB_ROOT_USERNAME')
+
+MONGO_INITDB_ROOT_PASSWORD = os.environ.get('MONGO_INITDB_ROOT_PASSWORD')
+
 REMOTE_POSTGRES_URL = os.environ.get('REMOTE_POSTGRES_URL')
 
 RABBITMQ_DEFAULT_USER = os.environ.get('RABBITMQ_DEFAULT_USER')
@@ -117,23 +121,18 @@ CELERY_APP_NAME = 'app'
 
 MONGO_CLIENT = None
 
-# Configuration for scheduler db using with celery
-SCHEDULE_DB = 'schedule'
-SCHEDULE_DB_UNAME = 'root'
-SCHEDULE_DB_PWD = 'rootrabbitmq2021'
-
 DB_NAME = 'master'  # Database name to use it as MONGO_CLIENT[f'{DB_NAME}']
 
 if all([DB_HOST, DB_PORT]):
     # initial connection to database
     MONGO_CLIENT = MongoClient(
-        f'mongodb://{SCHEDULE_DB_UNAME}:{SCHEDULE_DB_PWD}@{DB_HOST}:{DB_PORT}/?authMechanism=SCRAM-SHA-256')
+        f'mongodb://{MONGO_INITDB_ROOT_USERNAME}:{MONGO_INITDB_ROOT_PASSWORD}@{DB_HOST}:{DB_PORT}/?authMechanism=SCRAM-SHA-256')
     # Create schedule db for storing result backend
-    if not MONGO_CLIENT[SCHEDULE_DB].command('usersInfo', usersInfo={"user": SCHEDULE_DB_UNAME, "db": SCHEDULE_DB}).get('users'):
-        MONGO_CLIENT[SCHEDULE_DB].command(
+    if not MONGO_CLIENT['celery'].command('usersInfo', usersInfo={"user": MONGO_INITDB_ROOT_USERNAME, "db": "celery"}).get('users'):
+        MONGO_CLIENT['celery'].command(
             'createUser',
-            createUser=SCHEDULE_DB_UNAME,
-            pwd=SCHEDULE_DB_PWD,
+            createUser=MONGO_INITDB_ROOT_USERNAME,
+            pwd=MONGO_INITDB_ROOT_PASSWORD,
             roles=["readWrite", "dbAdmin"],
             mechanisms=["SCRAM-SHA-256"],
         )
