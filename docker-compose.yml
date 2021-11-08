@@ -1,10 +1,10 @@
 version: "3.8"
 services:
   servive_name:
-    container_name: {PROJECT_NAME}
+    container_name: {{PROJECT_NAME}}
     build:
       context: .
-    working_dir: /usr/app/{PROJECT_NAME}
+    working_dir: /usr/app/{{PROJECT_NAME}}
     env_file: .env
     ports:
       - 2306:2306
