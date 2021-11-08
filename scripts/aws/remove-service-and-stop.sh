@@ -4,6 +4,8 @@ set +e
 cd /usr/app/{{PROJECT_NAME}} || exit
 source ./project.settings
 # Docker management
+docker volume prune
+docker system prune
 docker-compose down
 # Service management
 sudo systemctl stop $SERVICE_NAME.service
