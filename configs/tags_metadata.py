@@ -7,5 +7,13 @@ TAGS_METADATA = [
             'description': 'None',
             'url': 'https://external-docs'
         }
+    },
+    {
+        'name': 'account',
+        'description': 'Các API liên quan tài khoản người dùng',
+        'externalDocs': {
+            'description': 'None',
+            'url': 'https://external-docs'
+        }
     }
 ]
