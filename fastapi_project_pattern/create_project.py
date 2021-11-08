@@ -90,7 +90,7 @@ def start_creation(path: Path = None):
             _path = path / file
             if os.path.isfile(_path.as_posix()):
                 for k, v in VARS.items():
-                    replace(_path, "{" + k + "}", VARS[k][0])
+                    replace(_path, "{{" + k + "}}", VARS[k][0])
             elif os.path.isdir(_path):
                 change_files(_path)
 

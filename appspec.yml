@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 files:
   - source: ./
-    destination: /usr/app/{PROJECT_NAME}
+    destination: /usr/app/{{PROJECT_NAME}}
 hooks:
   BeforeInstall:
     - location: scripts/aws/install_dependencies.sh

@@ -9,14 +9,14 @@ services:
     ports:
       - 2306:2306
     volumes:
-      - .:/usr/app/{PROJECT_NAME}
+      - .:/usr/app/{{PROJECT_NAME}}
     depends_on:
       - mongo
       - rabbitmq
 
   rabbitmq:
     image: rabbitmq:3.8.9-management-alpine
-    container_name: rabbitmq_{PROJECT_NAME}
+    container_name: rabbitmq_{{PROJECT_NAME}}
     restart: on-failure
     volumes:
       - rabbitmq_etc:/etc/rabbitmq/
@@ -33,7 +33,7 @@ services:
 
   mongo:
     image: mongo:latest
-    container_name: mongo_{PROJECT_NAME}
+    container_name: mongo_{{PROJECT_NAME}}
     restart: on-failure
     env_file: .env
     ports:

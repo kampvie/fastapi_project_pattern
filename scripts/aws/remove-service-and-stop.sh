@@ -1,7 +1,7 @@
 #!/bin/bash
 set +e
 
-cd /usr/app/{PROJECT_NAME} || exit
+cd /usr/app/{{PROJECT_NAME}} || exit
 source ./project.settings
 # Docker management
 docker-compose down

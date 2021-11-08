@@ -1,11 +1,11 @@
 #!/bin/bash
 set +e
-cd /usr/app/{PROJECT_NAME} || exit
+cd /usr/app/{{PROJECT_NAME}} || exit
 source ./project.settings
 # Create service file
-SERVICE_FILE_PATH=/usr/app/{PROJECT_NAME}/$SERVICE_NAME.service
+SERVICE_FILE_PATH=/usr/app/{{PROJECT_NAME}}/$SERVICE_NAME.service
 echo "[Unit]" >$SERVICE_FILE_PATH
-echo "Description=Start PROJECT_NAME service" >>$SERVICE_FILE_PATH
+echo "Description=Start {{PROJECT_NAME}} service" >>$SERVICE_FILE_PATH
 echo "After=network.target" >>$SERVICE_FILE_PATH
 echo "[Service]" >>$SERVICE_FILE_PATH
 echo "WorkingDirectory=$(pwd)" >>$SERVICE_FILE_PATH
