@@ -143,9 +143,6 @@ started_celery_schedule = None
 
 @app.on_event('startup')
 async def startup():
-    import os
-    import shlex
-    import subprocess
     # Starting celery schedule
     if not os.path.exists("./logs"):
         os.mkdir("./logs")
