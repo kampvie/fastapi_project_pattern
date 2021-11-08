@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-  servive_name:
+  servive_{{PROJECT_NAME}}:
     container_name: {{PROJECT_NAME}}
     build:
       context: .
@@ -43,8 +43,19 @@ services:
     volumes:
       - mongo_db:/data/db
 
+  posgresql:
+    image: postgres:latest
+    container_name: postgres_{{PROJECT_NAME}}
+    restart: on-failure
+    env_file: .env
+    ports:
+      - 54329:5432
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+
 volumes:
   mongo_db:
+  postgres_db:
   rabbitmq_etc:
   rabbitmq_data:
   rabbitmq_logs:
