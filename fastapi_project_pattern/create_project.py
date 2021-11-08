@@ -52,6 +52,7 @@ def start_creation(path: Path = None):
         'CLOUDINARY_URL': ["None", "CLOUDINARY_URL(Optional) >>> ", False, None, str],
         'SENDGRID_API_KEY': ["None", "SENDGRID_API_KEY(Optional) >>> ", False, None, str],
         'REMOTE_MONGO_URL': ["None", "REMOTE_MONGO_URL(Optional) >>> ", False, None, str],
+        'LOCAL_MONGO_DATABASE_NAME': ["master", "LOCAL_MONGO_DATABASE_NAME(Default: master) >>>", False, None, str],
         'REMOTE_POSTGRES_URL': ["None", "REMOTE_POSTGRES_URL[Optional] >>> ", False, None, str],
         'MONGO_INITDB_ROOT_USERNAME': ["mongo", "MONGO_INITDB_ROOT_USERNAME(Default: mongo) >>> ", False, None, str],
         'MONGO_INITDB_ROOT_PASSWORD': ["mongo", "MONGO_INITDB_ROOT_PASSWORD(Default: mongo) >>> ", False, None, str],

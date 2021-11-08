@@ -121,7 +121,7 @@ CELERY_APP_NAME = 'app'
 
 MONGO_CLIENT = None
 
-DB_NAME = 'master'  # Database name to use it as MONGO_CLIENT[f'{DB_NAME}']
+DB_NAME = os.environ.get('LOCAL_MONGO_DATABASE_NAME')  # Database name to use it as MONGO_CLIENT[f'{DB_NAME}']
 
 if all([DB_HOST, DB_PORT]):
     # initial connection to database
@@ -136,6 +136,10 @@ if all([DB_HOST, DB_PORT]):
             roles=["readWrite", "dbAdmin"],
             mechanisms=["SCRAM-SHA-256"],
         )
+
+if REMOTE_MONGO_URL:
+    # Switch back to remote mongo database service
+    MONGO_CLIENT = MongoClient(REMOTE_MONGO_URL)
 
 # Setting up events
 started_celery_schedule = None
