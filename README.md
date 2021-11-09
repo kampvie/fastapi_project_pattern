@@ -6,6 +6,7 @@
 * Celery
 * RabbitMQ
 * MongoDB
+* PostgreSQL
 * Web Socket
 * Send email with Sendgrid
 * ![logo](https://cloudinary-res.cloudinary.com/image/upload/c_scale,h_24,w_72/cloudinary_logo_for_white_bg.png) [Cloudinary](https://cloudinary.com/)
