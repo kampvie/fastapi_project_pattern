@@ -16,7 +16,7 @@ jobs:
   build-and-test:
     docker:
       - image: cimg/python:3.8
-    working_directory: ~/{PROJECT_NAME}
+    working_directory: ~/{{PROJECT_NAME}}
     steps:
       - checkout
       - run:
@@ -39,7 +39,7 @@ jobs:
   deploy-vps:
     machine:
       image: ubuntu-2004:202104-01
-    working_directory: ~/{PROJECT_NAME}
+    working_directory: ~/{{PROJECT_NAME}}
     steps:
       - checkout
       - add_ssh_keys:
@@ -55,7 +55,7 @@ jobs:
   build-and-publish-image:
     machine:
       image: ubuntu-2004:202104-01
-    working_directory: ~/{PROJECT_NAME}
+    working_directory: ~/{{PROJECT_NAME}}
     steps:
       - checkout
       - run:

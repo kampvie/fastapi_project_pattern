@@ -27,12 +27,16 @@ REMOTE_REPO = "https://github.com/kampvie/fastapi_project_pattern.git"
 BRANCH = "main"
 
 
-def start_creation(path: Path = None, use_local_posgres: bool = False, use_remote_postgres_url: bool = False):
+def start_creation(path: Path = None, use_local_posgres: bool = False, use_remote_postgres_url: bool = False,
+    use_circle_ci: bool = False, use_gitlab_ci: bool = False
+):
     """Create a project template
     Args:
         path (Path): Location a project should be placed once created
         use_local_posgres (bool): Whether use local PostgreSQL or not
         use_remote_postgres_url (bool): Use remote PostgreSQL or not
+        use_circle_ci (bool): Using Circle CI/CD
+        use_gitlab_ci (bool): Using Gitlab CI/CD
     """
     if not path:
         raise ValueError("path parameter is required")
@@ -76,7 +80,7 @@ def start_creation(path: Path = None, use_local_posgres: bool = False, use_remot
 
         'MONGO_DATABASE_NAME': ["master", "MONGO_DATABASE_NAME(Default: master) >>>", False, None, str],
 
-        'REMOTE_MONGO_URL': ["None", "REMOTE_MONGO_URL(Recommended to store shared data) >>> ", False, None, str],
+        'REMOTE_MONGO_URL': ["None", "REMOTE_MONGO_URL >>> ", True, None, str],
 
         'RABBITMQ_DEFAULT_USER': ["rabbit", "RABBITMQ_DEFAULT_USER(Default: rabbit) >>> ", False, None, str],
 
@@ -141,6 +145,16 @@ def start_creation(path: Path = None, use_local_posgres: bool = False, use_remot
         LOCAL_DIR / "LICENSE",
         LOCAL_DIR / "README.md",
     ]
+
+    if not use_gitlab_ci:
+        redundancies.append(
+            LOCAL_DIR / ".gitlab-ci.yml"
+        )
+
+    if not use_circle_ci:
+        CIRCLE_CI = LOCAL_DIR / ".circleci"
+        shutil.rmtree(CIRCLE_CI.as_posix())
+
     for _path in redundancies:
         os.remove(_path.as_posix())
 
