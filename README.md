@@ -35,5 +35,6 @@ from pathlib import Path
 
 from fastapi_project_pattern import start_creation
 
+# See help(start_creation) for more
 start_creation(Path.cwd())
 ```
