@@ -3,6 +3,7 @@ import os
 import subprocess
 import shutil
 import shlex
+import re
 from pathlib import Path
 from fileinput import FileInput
 from distutils.dir_util import copy_tree
@@ -26,10 +27,12 @@ REMOTE_REPO = "https://github.com/kampvie/fastapi_project_pattern.git"
 BRANCH = "main"
 
 
-def start_creation(path: Path = None):
+def start_creation(path: Path = None, use_local_posgres: bool = False, use_remote_postgres_url: bool = False):
     """Create a project template
     Args:
         path (Path): Location a project should be placed once created
+        use_local_posgres (bool): Whether use local PostgreSQL or not
+        use_remote_postgres_url (bool): Use remote PostgreSQL or not
     """
     if not path:
         raise ValueError("path parameter is required")
@@ -44,33 +47,64 @@ def start_creation(path: Path = None):
     VARS = {
         # KEY: [DefaultValue, Promtline, Required, ValidateRegrexPattern, Type]
         'PROJECT_NAME': ["", "Project name >>> ", True, None, str],
+
         'PROJECT_GIT_SSH_REPO': ["", "SSH git repository >>> ", True, None, str],
+
         'PROJECT_TITLE': ["", "Title >>> ", True, None, str],
+
         'PROJECT_SECRET_KEY': [SECRET_KEY, f"Secret[Default: {SECRET_KEY}] >>> ", False, None, str],
+
         'PROJECT_DESCRIPTION': [None, "Description >>> ", True, None, str],
+
         'PORT': ["2306", "Port to run [0-65536](Default: 2306) >>> ", False, None, str],
+
         'CLOUDINARY_URL': ["None", "CLOUDINARY_URL(Optional) >>> ", False, None, str],
+
         'SENDGRID_API_KEY': ["None", "SENDGRID_API_KEY(Optional) >>> ", False, None, str],
-        'REMOTE_MONGO_URL': ["None", "REMOTE_MONGO_URL(Optional) >>> ", False, None, str],
-        'LOCAL_MONGO_DATABASE_NAME': ["master", "LOCAL_MONGO_DATABASE_NAME(Default: master) >>>", False, None, str],
+
+        'LOCAL_POSTGRES_USER': ["None", "POSTGRES_USER[Optional] >>> ", False, None, str],
+
+        'LOCAL_POSTGRES_DB': ["None", "POSTGRES_DB[Optional] >>> ", False, None, str],
+
+        'LOCAL_POSTGRES_PASSWORD': ["None", "POSTGRES_PASSWORD[Optional] >>> ", False, None, str],
+
         'REMOTE_POSTGRES_URL': ["None", "REMOTE_POSTGRES_URL[Optional] >>> ", False, None, str],
+
         'MONGO_INITDB_ROOT_USERNAME': ["mongo", "MONGO_INITDB_ROOT_USERNAME(Default: mongo) >>> ", False, None, str],
-        'MONGO_INITDB_ROOT_PASSWORD': ["mongo", "MONGO_INITDB_ROOT_PASSWORD(Default: mongo) >>> ", False, None, str],
+
+        'MONGO_INITDB_ROOT_PASSWORD': ["mongo", "MONGO_INITDB_ROOT_PASSWORD >>> ", True, None, str],
+
+        'MONGO_DATABASE_NAME': ["master", "MONGO_DATABASE_NAME(Default: master) >>>", False, None, str],
+
+        'REMOTE_MONGO_URL': ["None", "REMOTE_MONGO_URL(Recommended to store shared data) >>> ", False, None, str],
+
         'RABBITMQ_DEFAULT_USER': ["rabbit", "RABBITMQ_DEFAULT_USER(Default: rabbit) >>> ", False, None, str],
-        'RABBITMQ_DEFAULT_PASS': ["rabbit", "RABBITMQ_DEFAULT_PASS(Default: rabbit) >>> ", False, None, str],
+
+        'RABBITMQ_DEFAULT_PASS': ["rabbit", "RABBITMQ_DEFAULT_PASS >>> ", True, None, str],
     }
+
+    # Check use_local_posgres flag. If it was not used then remove out of VARS 
+    if not use_local_posgres:
+        del VARS['LOCAL_POSTGRES_USER']
+        del VARS['LOCAL_POSTGRES_DB']
+        del VARS['LOCAL_POSTGRES_PASSWORD']
+    if not use_remote_postgres_url:
+        del VARS['REMOTE_POSTGRES_URL']
 
     def is_valid(v, text):
         # Check if text is empty but this field is required
         # So with that said it's not valid
         if len(text) == 0 and v[2]:
             return False
-        #TODO Check regrex to validate pattern
+        # TODO Check regrex to validate pattern
         return True
 
     for k, v in VARS.items():
         while True:
             text = input(v[1]).strip()
+            # Project name is not allowed contains spaces
+            if k == "PROJECT_NAME" and re.search(r"\s", text):
+                continue
             if is_valid(v, text):
                 v[0] = text or v[0]
                 break
@@ -92,6 +126,9 @@ def start_creation(path: Path = None):
             if os.path.isfile(_path.as_posix()):
                 for k, v in VARS.items():
                     replace(_path, "{{" + k + "}}", VARS[k][0])
+                # Check to uncomment codeblock
+                if use_local_posgres:
+                    replace(_path, "#_p ", "")
             elif os.path.isdir(_path):
                 change_files(_path)
 

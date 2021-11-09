@@ -43,19 +43,19 @@ services:
     volumes:
       - mongo_db:/data/db
 
-  posgresql:
-    image: postgres:latest
-    container_name: postgres_{{PROJECT_NAME}}
-    restart: on-failure
-    env_file: .env
-    ports:
-      - 54329:5432
-    volumes:
-      - postgres_db:/var/lib/postgresql/data
+  #_p posgresql:
+  #_p   image: postgres:latest
+  #_p   container_name: postgres_{{PROJECT_NAME}}
+  #_p restart: on-failure
+  #_p env_file: .env
+  #_p ports:
+  #_p   - 54329:5432
+  #_p volumes:
+  #_p   - postgres_db:/var/lib/postgresql/data
 
 volumes:
   mongo_db:
-  postgres_db:
+  #_p postgres_db:
   rabbitmq_etc:
   rabbitmq_data:
   rabbitmq_logs:
