@@ -52,6 +52,8 @@ def start_creation(path: Path = None, use_local_posgres: bool = False, use_remot
         # KEY: [DefaultValue, Promtline, Required, ValidateRegrexPattern, Type]
         'PROJECT_NAME': ["", "Project name >>> ", True, None, str],
 
+        'PROJECT_LOGO_URL': ["", "Project logo url >>> ", True, None, str],
+
         'PROJECT_GIT_SSH_REPO': ["", "SSH git repository >>> ", True, None, str],
 
         'PROJECT_TITLE': ["", "Title >>> ", True, None, str],
