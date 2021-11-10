@@ -35,7 +35,9 @@ services:
     image: mongo:latest
     container_name: mongo_{{PROJECT_NAME}}
     restart: on-failure
-    env_file: .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME={{MONGO_INITDB_ROOT_USERNAME}}
+      - MONGO_INITDB_ROOT_PASSWORD={{MONGO_INITDB_ROOT_PASSWORD}}
     ports:
       - 47017:27017
     expose:
