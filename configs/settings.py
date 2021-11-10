@@ -1,6 +1,7 @@
 import os
 from fastapi import FastAPI
 from pymongo import MongoClient
+from sqlalchemy import create_engine
 
 PROJECT_SECRET_KEY = "{{PROJECT_SECRET_KEY}}"
 
@@ -65,3 +66,17 @@ if all([DB_HOST, DB_PORT]):
 if REMOTE_MONGO_URL and REMOTE_MONGO_URL != "None":
     # Switch back to remote mongo database service
     MONGO_CLIENT = MongoClient(REMOTE_MONGO_URL)
+
+# Establishing Connectivity with SQL Database
+POSTGRES_HOST = os.environ.get('POSTGRES_HOST')
+POSTGRES_PORT = os.environ.get('POSTGRES_PORT')
+POSTGRES_USER = os.environ.get('POSTGRES_USER')
+POSTGRES_DB = os.environ.get('POSTGRES_DB')
+POSTGRES_PASSWORD = os.environ.get('POSTGRES_PASSWORD')
+
+SQL_ENGINE = None
+
+if all([POSTGRES_USER, POSTGRES_DB, POSTGRES_PASSWORD]):
+    SQL_ENGINE = create_engine(
+        f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+    )
