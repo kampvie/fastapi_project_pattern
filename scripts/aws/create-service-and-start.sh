@@ -21,7 +21,5 @@ if [ ! -e /etc/systemd/system/$SERVICE_NAME.service ]; then
     sudo systemctl start $SERVICE_NAME.service
     sudo systemctl enable $SERVICE_NAME.service
 else
-    sudo systemctl daemon-reload
     sudo systemctl restart $SERVICE_NAME.service
 fi
-
