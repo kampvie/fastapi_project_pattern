@@ -8,6 +8,8 @@ docker volume prune
 docker system prune
 docker-compose down
 # Service management
-sudo systemctl stop $SERVICE_NAME.service
-sudo systemctl disable $SERVICE_NAME.service
-sudo rm /etc/systemd/system/$SERVICE_NAME.service
+if [ -e /etc/systemd/system/$SERVICE_NAME.service ]; then
+    sudo systemctl stop $SERVICE_NAME.service
+    sudo systemctl disable $SERVICE_NAME.service
+    sudo rm /etc/systemd/system/$SERVICE_NAME.service
+fi

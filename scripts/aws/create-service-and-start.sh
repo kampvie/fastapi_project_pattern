@@ -16,7 +16,12 @@ echo "StandardError=syslog" >>$SERVICE_FILE_PATH
 echo "[Install]" >>$SERVICE_FILE_PATH
 echo "WantedBy=multi-user.target" >>$SERVICE_FILE_PATH
 #Copying service file to /ets/systemd/system
-sudo cp $SERVICE_FILE_PATH /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl start $SERVICE_NAME.service
-sudo systemctl enable $SERVICE_NAME.service
+if [ ! -e /etc/systemd/system/$SERVICE_NAME.service ]; then
+    sudo cp $SERVICE_FILE_PATH /etc/systemd/system/
+    sudo systemctl start $SERVICE_NAME.service
+    sudo systemctl enable $SERVICE_NAME.service
+else
+    sudo systemctl daemon-reload
+    sudo systemctl restart $SERVICE_NAME.service
+fi
+
