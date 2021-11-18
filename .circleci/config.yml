@@ -1,6 +1,6 @@
 # Before adding this file to your project be sure that you've done step creating ssh key on your
 # Linux machine and copy content of public key which located ~/.ssh/id_rsa.pub to this file ~/.ssh/authorized_keys on your VPS
-# fingerprints: By adding private ssh key which located ~/.ssh/id_rsa to ssh key in project settings
+# fingerprints: By adding private ssh key which located ~/.ssh/id_rsa to ssh key in project settings on CircleCI
 # SSH_USER: Username identity of user on VPS
 # SSH_HOST: Ip or DNS host of VPS
 # SSH_USER_PASSWORD: Password identity of user on VPS
@@ -8,7 +8,7 @@
 # DOCKER_USER: Dockerhub user
 # IMAGE_TAG: Image tag name to push
 # REPO: Dockerhub repo
-# All variables above need to be defined on circleci Environment Variables
+# All variables above need to be defined on Circleci Environment Variables
 
 version: 2.1
 
@@ -48,9 +48,19 @@ jobs:
       - run:
           name: Deploying to VPS server
           command: |
-            scp -o StrictHostKeyChecking=no ./scripts/vps/deploy.sh $SSH_USER@$SSH_HOST:
+            CURRENTDATE=`date +"%s"`
+            # Create directory for contain files to deploy project
+            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST mkdir -p deploy_$CURRENTDATE/scripts/aws
+            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST mkdir -p deploy_$CURRENTDATE/scripts/vps
+
+            # Transfer deploy files to server
+            scp -o StrictHostKeyChecking=no ./scripts/aws/install_dependencies.sh $SSH_USER@$SSH_HOST:deploy_$CURRENTDATE/scripts/aws/install_dependencies.sh
+            scp -o StrictHostKeyChecking=no ./scripts/vps/deploy.sh $SSH_USER@$SSH_HOST:deploy_$CURRENTDATE/scripts/vps/deploy.sh
             scp -o StrictHostKeyChecking=no ./project.settings $SSH_USER@$SSH_HOST:
-            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "echo $SSH_USER_PASSWORD | sudo -S chmod +x ./deploy.sh && ./deploy.sh"
+
+            # Execute transfered files
+            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "echo $SSH_USER_PASSWORD | sudo -S chmod +x ./deploy_$CURRENTDATE/scripts/aws/install_dependencies.sh && ./deploy_$CURRENTDATE/scripts/aws/install_dependencies.sh"
+            ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "echo $SSH_USER_PASSWORD | sudo -S chmod +x ./deploy_$CURRENTDATE/scripts/vps/deploy.sh && ./deploy_$CURRENTDATE/scripts/vps/deploy.sh"
 
   build-and-publish-image:
     machine:

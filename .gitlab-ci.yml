@@ -35,11 +35,19 @@ deploy-vps:
     - ssh-add ~/.ssh/$SSH_PRIVATE_KEY_NAME
   script: |
     echo "Deploying to VPS server"
-    scp -o StrictHostKeyChecking=no -i  ~/.ssh/$SSH_PRIVATE_KEY_NAME ./scripts/aws/install_dependencies.sh $SSH_USER@$SSH_HOST:
-    scp -o StrictHostKeyChecking=no -i  ~/.ssh/$SSH_PRIVATE_KEY_NAME ./scripts/vps/deploy.sh $SSH_USER@$SSH_HOST:
+    CURRENTDATE=`date +"%s"`
+    # Create directory for contain files to deploy project
+    ssh -o StrictHostKeyChecking=no -i  ~/.ssh/$SSH_PRIVATE_KEY_NAME $SSH_USER@$SSH_HOST mkdir -p deploy_$CURRENTDATE/scripts/aws
+    ssh -o StrictHostKeyChecking=no -i  ~/.ssh/$SSH_PRIVATE_KEY_NAME $SSH_USER@$SSH_HOST mkdir -p deploy_$CURRENTDATE/scripts/vps
+
+    # Transfer deploy files to server
+    scp -o StrictHostKeyChecking=no -i  ~/.ssh/$SSH_PRIVATE_KEY_NAME ./scripts/aws/install_dependencies.sh $SSH_USER@$SSH_HOST:deploy_$CURRENTDATE/scripts/aws/install_dependencies.sh
+    scp -o StrictHostKeyChecking=no -i  ~/.ssh/$SSH_PRIVATE_KEY_NAME ./scripts/vps/deploy.sh $SSH_USER@$SSH_HOST:deploy_$CURRENTDATE/scripts/vps/deploy.sh
     scp -o StrictHostKeyChecking=no -i  ~/.ssh/$SSH_PRIVATE_KEY_NAME ./project.settings $SSH_USER@$SSH_HOST:
-    ssh -o StrictHostKeyChecking=no -i  ~/.ssh/$SSH_PRIVATE_KEY_NAME $SSH_USER@$SSH_HOST "echo $SSH_USER_PASSWORD | sudo -S chmod +x ./install_dependencies.sh && ./install_dependencies.sh"
-    ssh -o StrictHostKeyChecking=no -i  ~/.ssh/$SSH_PRIVATE_KEY_NAME $SSH_USER@$SSH_HOST "echo $SSH_USER_PASSWORD | sudo -S chmod +x ./deploy.sh && ./deploy.sh"
+    
+    # Execute transfered files
+    ssh -o StrictHostKeyChecking=no -i  ~/.ssh/$SSH_PRIVATE_KEY_NAME $SSH_USER@$SSH_HOST "echo $SSH_USER_PASSWORD | sudo -S chmod +x ./deploy_$CURRENTDATE/scripts/aws/install_dependencies.sh && ./deploy_$CURRENTDATE/scripts/aws/install_dependencies.sh"
+    ssh -o StrictHostKeyChecking=no -i  ~/.ssh/$SSH_PRIVATE_KEY_NAME $SSH_USER@$SSH_HOST "echo $SSH_USER_PASSWORD | sudo -S chmod +x ./deploy_$CURRENTDATE/scripts/vps/deploy.sh && ./deploy_$CURRENTDATE/scripts/vps/deploy.sh"
     echo "Deploy done!"
   only:
     - main
