@@ -5,27 +5,20 @@
 * FastAPI
 * Celery
 * RabbitMQ
-* MongoDB
-* PostgreSQL
+* MongoDB(PyMongo)
+* PostgreSQL(SQL Alchemmy, Alembic)
 * Web Socket
 * Send email with Sendgrid
 * ![logo](https://cloudinary-res.cloudinary.com/image/upload/c_scale,h_24,w_72/cloudinary_logo_for_white_bg.png) [Cloudinary](https://cloudinary.com/)
-* CircleCI
-* GitlabCI/CD
 
-**AWS CodeDeploy scripts**
+**Deployments**
 
-| Location         |
-| ---------------- |
-| scripts/aws/*.sh |
-| ./appspec.yml    |
-
-**Deploy VPS scripts**
-
-| Location             | CI/CD        |
-| -------------------- | ------------ |
-| .gitlab-ci.yml       | Gitlab CI/CD |
-| .circleci/config.yml | CircleCI     |
+| Location             | CI/CD          |
+| -------------------- | -------------- |
+| .gitlab-ci.yml       | Gitlab CI/CD   |
+| .circleci/config.yml | CircleCI       |
+| ./scripts/aws/*.sh   | AWS CodeDeploy |
+| ./scripts/vps/*.sh   | Manual Deploy  |
 
 **Installation**
 
