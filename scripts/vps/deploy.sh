@@ -1,7 +1,9 @@
 #!/bin/bash
 
-source ./project.settings
-
+# Export all enviroment variables to use later
+source ../../project.settings
+# Change working directory to home
+cd $HOME
 # Pull project from VCS
 if [[ -d "$PROJECT_NAME" ]]; then
   cd $PROJECT_NAME || exit
@@ -22,7 +24,7 @@ sudo rm /etc/systemd/system/$SERVICE_NAME.service
 # Create service file
 SERVICE_FILE_PATH=$HOME/$SERVICE_NAME.service
 echo "[Unit]" >$SERVICE_FILE_PATH
-echo "Description=Start project service" >>$SERVICE_FILE_PATH
+echo "Description=Start project $PROJECT_NAME service" >>$SERVICE_FILE_PATH
 echo "After=network.target" >>$SERVICE_FILE_PATH
 echo "[Service]" >>$SERVICE_FILE_PATH
 echo "WorkingDirectory=$(pwd)" >>$SERVICE_FILE_PATH
