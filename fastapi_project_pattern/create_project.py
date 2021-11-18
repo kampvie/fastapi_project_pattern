@@ -80,7 +80,7 @@ def start_creation(path: Path = None, use_local_posgres: bool = False, use_remot
 
         'MONGO_INITDB_ROOT_PASSWORD': ["mongo", "MONGO_INITDB_ROOT_PASSWORD >>> ", True, None, str],
 
-        'MONGO_DATABASE_NAME': ["master", "MONGO_DATABASE_NAME(Default: master) >>>", False, None, str],
+        'MONGO_DATABASE_NAME': ["master", "MONGO_DATABASE_NAME(Default: master) >>>", True, None, str],
 
         'REMOTE_MONGO_URL': ["None", "REMOTE_MONGO_URL >>> ", True, None, str],
 
