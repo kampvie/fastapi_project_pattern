@@ -68,6 +68,13 @@ def start_creation(path: Path = None, use_local_posgres: bool = False, use_remot
 
         'SENDGRID_API_KEY': ["None", "SENDGRID_API_KEY(Optional) >>> ", False, None, str],
 
+        'SENDGRID_FROM_EMAIL': ["None",
+            "SENDGRID_FROM_EMAIL(Optional), email to send others  >>> ",
+            False,
+            None,
+            str
+        ],
+
         'LOCAL_POSTGRES_USER': ["None", "POSTGRES_USER[Optional] >>> ", False, None, str],
 
         'LOCAL_POSTGRES_DB': ["None", "POSTGRES_DB[Optional] >>> ", False, None, str],

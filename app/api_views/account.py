@@ -7,7 +7,7 @@ from bson.objectid import ObjectId
 from fastapi.responses import JSONResponse
 from pydantic import EmailStr
 from pymongo import ReturnDocument
-from configs.settings import DB_NAME, PROJECT_SECRET_KEY, app, MONGO_CLIENT
+from configs.settings import DB_NAME, PROJECT_SECRET_KEY, app, MONGO_CLIENT, SENDGRID_FROM_EMAIL
 from secure._token import get_data_from_access_token, create_access_token, valid_access_token, is_expired
 from secure._password import get_password_hash, verify_password
 
@@ -93,7 +93,7 @@ async def create_account(
     # Create access token container userId and expire time for a link
     encoded_jwt, _ = create_access_token({'user_id': str(inserted_id)},
                                          expires_delta=datetime.timedelta(minutes=30), secret_key=PROJECT_SECRET_KEY)
-    await create_account_verification('customer@sasamviet.com', email, data={
+    await create_account_verification(SENDGRID_FROM_EMAIL, email, data={
         'User_Name': username,
         'msg': 'Nhấn vào link hoặc nút xác nhận bên dưới để xác nhận tài khoản',
         'Verification_Link': f'{verification_link}?verifyKey={encoded_jwt}'
@@ -224,7 +224,7 @@ async def reset_password(
     if not user:
         return JSONResponse(content={'status': 'Lỗi!', 'msg': 'Tài khoản không tồn tại!'}, status_code=status.HTTP_404_NOT_FOUND)
     # Check if keyonce is not used
-    await send_reset_password_email('customer@sasamviet.com', email, data={
+    await send_reset_password_email(SENDGRID_FROM_EMAIL, email, data={
         'msg': 'Vui lòng xác nhận địa chỉ email của bạn bằng cách nhập mã xác minh bên dưới. Mã có giá trị trong 30 phút',
         'keyonce': keyonce
     })
