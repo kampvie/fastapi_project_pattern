@@ -3,7 +3,7 @@
 # FastAPI project pattern with tools
 
 * FastAPI
-* Celery
+* Celery(Monitoring with Flower)
 * RabbitMQ
 * MongoDB(PyMongo)
 * PostgreSQL(SQL Alchemmy, Alembic)
