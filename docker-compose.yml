@@ -13,7 +13,7 @@ services:
     depends_on:
       - mongo
       - rabbitmq
-    #_p - posgresql
+      #_p - posgresql
 
   rabbitmq:
     image: rabbitmq:3.8.9-management-alpine
