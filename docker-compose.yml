@@ -32,6 +32,18 @@ services:
     depends_on:
       - mongo
 
+  celery_flower:
+  image: mher/flower
+  container_name: flower_{{PROJECT_NAME}}
+  command: ["celery", "flower", "--basic_auth=user:pass"]
+  ports:
+    - 49555:5555
+  expose:
+    - 5555
+  env_file: .env
+  depends_on:
+    - servive_{{PROJECT_NAME}}
+
   mongo:
     image: mongo:latest
     container_name: mongo_{{PROJECT_NAME}}
